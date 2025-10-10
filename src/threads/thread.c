@@ -52,7 +52,7 @@ static long long user_ticks;    /* # of timer ticks in user programs. */
 
 /* Scheduling. */
 #define TIME_SLICE 4            /* # of timer ticks to give each thread. */
-static unsigned thread_ticks;   /* # of timer ticks since last yield. */
+static unsigned thread_ticks;   /* # of timer ticks since last yield.(yield means to leave the processor to other threads) */
 
 /* If false (default), use round-robin scheduler.
    If true, use multi-level feedback queue scheduler.
@@ -98,6 +98,18 @@ thread_init (void)
   init_thread (initial_thread, "main", PRI_DEFAULT);
   initial_thread->status = THREAD_RUNNING;
   initial_thread->tid = allocate_tid ();
+  printf("___________________________\n");
+  printf("___________________________\n");
+  printf("___________________________\n");
+  printf("here is the first edit\n");
+  printf("___________________________\n");
+  printf("___________________________\n");
+  printf("___________________________\n");
+  printf("___________________________\n");
+  printf("___________________________\n");
+  printf("___________________________\n");
+  // while(1)printf('.');
+
 }
 
 /* Starts preemptive thread scheduling by enabling interrupts.
@@ -236,7 +248,7 @@ thread_unblock (struct thread *t)
   ASSERT (is_thread (t));
 
   old_level = intr_disable ();
-  ASSERT (t->status == THREAD_BLOCKED);
+  ASSERT (t->status == THREAD_BLOCKED); // there is a panic here 
   list_push_back (&ready_list, &t->elem);
   t->status = THREAD_READY;
   intr_set_level (old_level);
@@ -443,6 +455,11 @@ running_thread (void)
 static bool
 is_thread (struct thread *t)
 {
+  // printf(t != NULL);
+  // printf("-----------------\n");
+  // printf(t->magic == THREAD_MAGIC);
+  // printf("-----------------\n");
+
   return t != NULL && t->magic == THREAD_MAGIC;
 }
 
