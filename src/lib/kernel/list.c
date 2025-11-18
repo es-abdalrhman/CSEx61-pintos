@@ -168,6 +168,7 @@ list_tail (struct list *list)
 void
 list_insert (struct list_elem *before, struct list_elem *elem)
 {
+
   ASSERT (is_interior (before) || is_tail (before));
   ASSERT (elem != NULL);
 
@@ -216,6 +217,10 @@ list_push_front (struct list *list, struct list_elem *elem)
 void
 list_push_back (struct list *list, struct list_elem *elem)
 {
+  // if(&list->head == NULL || &list->tail == NULL){
+  //   list_init(list);
+  // }
+  // debug_print_list(list,"list before push back");
   list_insert (list_end (list), elem);
 }
 
@@ -272,6 +277,22 @@ list_pop_back (struct list *list)
   struct list_elem *back = list_back (list);
   list_remove (back);
   return back;
+}
+#include <stdio.h>   /* Add this at the top of list.c */
+
+/* Debug helper: prints the raw addresses of the list's head and tail nodes. */
+void
+debug_print_list(struct list *list, const char *name)
+{
+  printf("=== Debug list: %s ===\n", name);
+  printf("List address:        %p\n", (void *) list);
+  printf("Head elem:           %p\n", (void *) &list->head);
+  printf("  head.prev:         %p\n", (void *) list->head.prev);
+  printf("  head.next:         %p\n", (void *) list->head.next);
+  printf("Tail elem:           %p\n", (void *) &list->tail);
+  printf("  tail.prev:         %p\n", (void *) list->tail.prev);
+  printf("  tail.next:         %p\n", (void *) list->tail.next);
+  printf("==========================\n");
 }
 
 /* Returns the front element in LIST.

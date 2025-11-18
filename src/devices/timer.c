@@ -11,7 +11,7 @@
 #include "threads/malloc.h"
 // #include <thread>
 // #include <list>
-struct list sleeping_threads;
+struct list sleeping_threads; // es-abdelrahman
 
 /* See [8254] for hardware details of the 8254 timer chip. */
 
@@ -40,7 +40,7 @@ static void real_time_delay (int64_t num, int32_t denom);
 void
 timer_init (void) 
 {
-  list_init(&sleeping_threads);
+  list_init(&sleeping_threads); // es-abdelrahman
   pit_configure_channel (0, 2, TIMER_FREQ);
   intr_register_ext (0x20, timer_interrupt, "8254 Timer");
 }
@@ -202,7 +202,7 @@ timer_print_stats (void)
   printf ("Timer: %"PRId64" ticks\n", timer_ticks ());
 }
 
-// so we should here handle check the blocked threads if this is the time to wake them up
+// es-abdelrahman
 /* Timer interrupt handler. */
 static void
 timer_interrupt (struct intr_frame *args UNUSED)
@@ -261,7 +261,7 @@ busy_wait (int64_t loops)
   while (loops-- > 0)
     barrier ();
 }
-
+// es-abdelrahman
 /* Sleep for approximately NUM/DENOM seconds. */
 static void
 real_time_sleep (int64_t num, int32_t denom) 

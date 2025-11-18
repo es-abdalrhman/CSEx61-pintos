@@ -80,6 +80,18 @@ typedef int tid_t;
    only because they are mutually exclusive: only a thread in the
    ready state is on the run queue, whereas only a thread in the
    blocked state is on a semaphore wait list. */
+struct lock_donated_priority
+{
+   /* data */
+   struct list_elem lock_donated_elem;
+   struct lock *lock;
+   int donated_priority;
+};
+// struct lock_acquired{
+//    struct lock *lock;
+//    struct list_elem elem;
+// };
+
 struct thread
   {
     /* Owned by thread.c. */
@@ -88,8 +100,19 @@ struct thread
     char name[16];                      /* Name (for debugging purposes). */
     uint8_t *stack;                     /* Saved stack pointer. */
     int priority;                       /* Priority. */
+    int original_priority;
+    // we need to return to the original priority to save which lock we are releasing and what is my original priority before I take it
+    struct list locks_donated_priorities;
+    struct lock* w_lock;              // the lock that the thread is waiting for
+   //  when I set those I would make them integer normal but when use them turn them to fixed point 
+    int nice;                 /* Niceness value. */
+    int recent_cpu;           /* Recent CPU usage (fixed-point). */
+
+    // list of all locks acquired
+   // struct list locks_acquired;
+    //  struct list in_semas;             // I made this to handle priority donation inside semaphores but then I noticed that is need for the level of locks only;
     struct list_elem allelem;           /* List element for all threads list. */
-    int64_t wake_time;   // time to wake up 
+    int64_t wake_time;   // time to wake up es-abdelrahman
     /* Shared between thread.c and synch.c. */
     struct list_elem elem;              /* List element. */
 
@@ -105,7 +128,7 @@ struct thread
 /* If false (default), use round-robin scheduler.
    If true, use multi-level feedback queue scheduler.
    Controlled by kernel command-line option "-o mlfqs". */
-extern bool thread_mlfqs;
+extern bool thread_mlfqs; 
 
 void thread_init (void);
 void thread_start (void);
@@ -137,5 +160,8 @@ int thread_get_nice (void);
 void thread_set_nice (int);
 int thread_get_recent_cpu (void);
 int thread_get_load_avg (void);
+
+struct thread*
+thread_with_highest_priority(struct list* list); // es-abdelrahman
 
 #endif /* threads/thread.h */
