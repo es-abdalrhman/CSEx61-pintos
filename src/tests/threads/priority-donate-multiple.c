@@ -14,7 +14,8 @@
 #include "threads/init.h"
 #include "threads/synch.h"
 #include "threads/thread.h"
-
+#include "list.h"
+#include "../../threads/synch.h"
 static thread_func a_thread_func;
 static thread_func b_thread_func;
 
@@ -28,7 +29,7 @@ test_priority_donate_multiple (void)
 
   /* Make sure our priority is the default. */
   ASSERT (thread_get_priority () == PRI_DEFAULT);
-
+//   msg("Main thread with id = %d",thread_current()->tid);
   lock_init (&a);
   lock_init (&b);
 
@@ -42,7 +43,14 @@ test_priority_donate_multiple (void)
   thread_create ("b", PRI_DEFAULT + 2, b_thread_func, &b);
   msg ("Main thread should have priority %d.  Actual priority: %d.",
        PRI_DEFAULT + 2, thread_get_priority ());
-
+     // debug and see the size and priority of locks_donated_priorities
+     // msg("size of the donations %d",list_size(&a.holder->locks_donated_priorities));
+     // struct list_elem *elem = list_begin(&a.holder->locks_donated_priorities);
+     // while(elem != list_end(&a.holder->locks_donated_priorities)){
+     //      struct lock_donated_priority * l_d_p = list_entry(elem , struct lock_donated_priority ,lock_donated_elem);
+     //      msg("priority donated ---> %d, ",l_d_p->donated_priority);
+     //      elem = list_next(elem);
+     // }
   lock_release (&b);
   msg ("Thread b should have just finished.");
   msg ("Main thread should have priority %d.  Actual priority: %d.",
@@ -61,6 +69,7 @@ a_thread_func (void *lock_)
 
   lock_acquire (lock);
   msg ("Thread a acquired lock a.");
+//   msg("Main thread with id = %d",thread_current()->tid);
   lock_release (lock);
   msg ("Thread a finished.");
 }
@@ -72,6 +81,7 @@ b_thread_func (void *lock_)
 
   lock_acquire (lock);
   msg ("Thread b acquired lock b.");
+//   msg("Main thread with id = %d",thread_current()->tid);
   lock_release (lock);
   msg ("Thread b finished.");
 }
